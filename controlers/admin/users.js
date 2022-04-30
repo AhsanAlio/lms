@@ -212,7 +212,7 @@ exports.sort=(req,res,next)=>{
     let username=req.body.username
     let date=req.body.date
 
-    let sql=`select name,username,password,email,phone_no,gender,occupation from users order by name ${username} , date ${date}`
+    let sql=`select id,name,username,password,email,phone_no,gender,occupation,date from users order by name ${username} , date ${date}`
     db.query(sql,(err,result)=>{
 
         if(!err) {

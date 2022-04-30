@@ -1,23 +1,25 @@
 const db=require('../database_reference')
 
 
-// records
+// payment
 
-// To Create data in records
+// To Create data in payment
 
 exports.insert=(req,res)=>{
 
     let username=req.body.username
     let email=req.body.email
     let book_name=req.body.book_name
-    let total_book=db.query('SELECT count(*) FROM table');
+    let pay_type=req.body.pay_type
     let date=new Date().toISOString().slice(0, 10)
 
-    sql='insert into records(username,email,book_name,date,total_book) values ($1,$2,$3,$4,$5)'
+    sql='insert into payment(username,email,book_name,pay_type,date) values ($1,$2,$3,$4,$5) returning*;'
 
-    db.query(sql,[username,email,book_name,date,total_book],(err,result)=>{
+    db.query(sql,[username,email,book_name,pay_type,date],(err,result)=>{
+
 
         if(!err){
+
             res.status(200).json({
                 status:'success',
                 message:'data inserted!',
@@ -34,10 +36,10 @@ exports.insert=(req,res)=>{
     })
 }
 
-//To Delete Data from records
+//To Delete Data from payment
 exports.delete=(req,res)=>{
 
-    sql='delete from records where id=$1 returning *;'
+    sql='delete from payment where id=$1 returning *;'
 
     db.query(sql,[req.params.id],(err,result)=>{
 
@@ -58,11 +60,11 @@ exports.delete=(req,res)=>{
     })
 }
 
-// To Fecth Data from records
+// To Fecth Data from payment
 
 exports.fetch=(req,res)=>{
 
-    sql='select * from records'
+    sql='select * from payment'
 
     db.query(sql,(err,result)=>{
 
@@ -83,11 +85,11 @@ exports.fetch=(req,res)=>{
     })
 }
 
-// To Fecth Data from records by id
+// To Fecth Data from payment by id
 
 exports.fetch_id=(req,res)=>{
 
-    sql='select * from records where id=$1;'
+    sql='select * from payment where id=$1;'
 
     db.query(sql,[req.params.id],(err,result)=>{
 
@@ -108,11 +110,11 @@ exports.fetch_id=(req,res)=>{
     })
 }
 
-// To update data from records by id
+// To update data from payment by id
 
 exports.update=(req,res,next)=>{
 
-    let sql=`update records set `
+    let sql=`update payment set `
 
     if(req.body.username) {
         sql = sql + `username = '${req.body.username}',`;
@@ -126,8 +128,8 @@ exports.update=(req,res,next)=>{
         sql = sql + `book_name = '${req.body.book_name}',`;
     }
 
-    if(req.body.total_book) {
-        sql = sql + `total_book = '${req.body.total_book}',`;
+    if(req.body.pay_type) {
+        sql = sql + `pay_type = '${req.body.pay_type}',`;
     }
 
     sql = sql.slice(0, -1); 
@@ -152,11 +154,11 @@ exports.update=(req,res,next)=>{
     })
 }
 
-// To search  and filter data from records
+// To search  and filter data from payment
 
 exports.search=(req,res,next)=>{
 
-    let sql=`select * from records where `
+    let sql=`select * from payment where `
 
     if(req.body.username) {
         sql = sql + `username = '${req.body.username}' and `;
@@ -167,11 +169,11 @@ exports.search=(req,res,next)=>{
     }
 
     if(req.body.book_name) {
-        sql = sql + `book_name = ${req.body.book_name} and `;
+        sql = sql + `book_name = '${req.body.book_name}' and `;
     }
 
-    if(req.body.total_book) {
-        sql = sql + `total_book = '${req.body.total_book}' and `;
+    if(req.body.pay_type) {
+        sql = sql + `pay_type = '${req.body.pay_type}' and `;
     }
 
     if(req.body.id) {
@@ -179,6 +181,8 @@ exports.search=(req,res,next)=>{
     }
 
     sql = sql.slice(0, -4); 
+
+    console.log(sql)
 
     db.query(sql,(err,result)=>{
 
@@ -208,13 +212,13 @@ exports.search=(req,res,next)=>{
     })
 }
 
-// to sort data from records
+// to sort data from payment
 exports.sort=(req,res,next)=>{
 
     let username=req.body.username
-    let date=req.body.date
+    let date =req.body.date
 
-    let sql=`select username,email,book_name,total_book,date from records order by username ${username} , date ${date}`
+    let sql=`select id,username,email,book_name,pay_type,date from payment order by username ${username} , date ${date}`
     db.query(sql,(err,result)=>{
 
         if(!err) {

@@ -3,7 +3,7 @@ const db=require('../database')
 
 const generateAccessToken = (user) => {
     return jwt.sign({ username: user.username, email:user.email,occupation:user.occupation}, "mySecretKey", {
-      expiresIn: "300s",
+      expiresIn: "30000000s",
     });
   };
 
@@ -13,8 +13,6 @@ const generateAccessToken = (user) => {
     let password=req.body.password
 
     const user= await db.query('select * from user_rule where username=$1 and password=$2',[username,password]);
-
-    console.log(user.rows)
 
     if (user) {
         //Generate an access token

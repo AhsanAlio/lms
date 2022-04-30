@@ -1,3 +1,4 @@
+
 const db=require('../database_reference')
 
 
@@ -7,34 +8,46 @@ const db=require('../database_reference')
 
 exports.insert=(req,res)=>{
 
-    const uuid = require('uuid');
-    const uuid2=uuid.v4();
+    let uuid = require('uuid');
+    let uuid2=uuid.v4();
     let uuid3=uuid2.slice(0,-21);
-    console.log(uuid3)
 
     let title=req.body.title
     let price=req.body.price
     let author=req.body.author
     let description=req.body.description
     let subject=req.body.subject
-    let isbn_no=req.body.isbn_no
+    let isbn_no=uuid3
     let date=new Date().toISOString().slice(0, 10)
+    let copy=req.body.copy
 
-    sql='insert into books(title,price,author,description,date,subject,isbn_no) values ($1,$2,$3,$4,$5,$6,$7)'
+    const copies=db.query('select copy from books where copy=$1',[copy])
 
-    db.query(sql,[title,price,author,description,date,subject,isbn_no],(err,result)=>{
+    if(copies==null){
 
-        if(!err){
-            res.status(200).json({
-                status:'success',
-                message:'data inserted!',
-                date:result.rows
-            })
-        }
-        else
-            console.log(JSON.stringify(err))
+        sql='insert into books(title,price,author,description,date,subject,isbn_no,copy) values ($1,$2,$3,$4,$5,$6,$7,$8)'
 
-    })
+        db.query(sql,[title,price,author,description,date,subject,isbn_no],copy,(err,result)=>{
+
+            if(!err){
+                res.status(200).json({
+                    status:'success',
+                    message:'data inserted!',
+                    date:result.rows
+                })
+            }
+            else
+                res.status(500).json({
+                status: "Error",
+                message: "Query Execution Error!",
+                data: result.rows
+            });
+
+        })
+    }
+    else{
+        copy=copy+1
+    }
 }
 
 //To Delete Data from books
@@ -53,7 +66,11 @@ exports.delete=(req,res)=>{
             });
         }
         else
-            console.log(JSON.stringify(err))
+            res.status(500).json({
+            status: "Error",
+            message: "Query Execution Error!",
+            data: result.rows
+        });
     })
 }
 
@@ -74,7 +91,11 @@ exports.fetch=(req,res)=>{
             });
         }
         else
-            console.log(JSON.stringify(err))
+            res.status(500).json({
+            status: "Error",
+            message: "Query Execution Error!",
+            data: result.rows
+        });
     })
 }
 
@@ -95,7 +116,11 @@ exports.fetch_id=(req,res)=>{
             });
         }
         else
-            console.log(JSON.stringify(err))
+            res.status(500).json({
+            status: "Error",
+            message: "Query Execution Error!",
+            data: result.rows
+        });
     })
 }
 
@@ -147,7 +172,11 @@ exports.update=(req,res,next)=>{
             });
         }
         else
-            console.log(JSON.stringify(err))
+            res.status(500).json({
+            status: "Error",
+            message: "Query Execution Error!",
+            data: result.rows
+        });
     })
 }
 
@@ -207,17 +236,21 @@ exports.search=(req,res,next)=>{
             });
         }
         else
-            console.log(JSON.stringify(err))
+            res.status(500).json({
+            status: "Error",
+            message: "Query Execution Error!",
+            data: result.rows
+        });
     })
 }
 
 // to sort data from books
 exports.sort=(req,res,next)=>{
 
-    let asc=req.body.asc
-    let desc =req.body.desc
+    let username=req.body.username
+    let copy =req.body.copy
 
-    let sql=`select title,price,author,description,date,subject,isbn_no from books order by subject ${asc} , date ${desc}`
+    let sql=`select id,title,price,author,description,date,subject,isbn_no from books order by subject ${username} , date ${copy}`
     db.query(sql,(err,result)=>{
 
         if(!err) {
@@ -230,6 +263,10 @@ exports.sort=(req,res,next)=>{
             });
         }
         else
-            console.log(JSON.stringify(err))
+            res.status(500).json({
+            status: "Error",
+            message: "Query Execution Error!",
+            data: result.rows
+        });
     })
 }

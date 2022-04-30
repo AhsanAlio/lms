@@ -1,3 +1,4 @@
+const { redirect } = require('express/lib/response');
 const db=require('../database')
 
 // To Create Data
@@ -26,9 +27,19 @@ exports.signup=(req,res,next)=>{
 
     if(validateEmail(email)==true && validateusername(username==true)){
 
-        const unique=db.query('select username,password,email where username=$1 or password=$2 or email=$3',[username,password,email])
+        console.log('hello')
 
-        if(!unique){
+        const unique=db.query('select username,password,email from users where username=$1 or password=$2 or email=$3',[username,password,email])
+
+        if(unique==null){
+
+            console.log('elif')
+            res.status(400).json({
+            status: "Error",
+            message: "username or password or email already in uses",
+        });  
+        }
+        else{
 
             let date=new Date().toISOString().slice(0, 10)
 
@@ -52,18 +63,12 @@ exports.signup=(req,res,next)=>{
                     });
                 }
                 else
-                    res.status(500).json({
-                        status: "Error",
-                        message: "Query Execution Error!",
-                        data: result.rows
-                    });
+                    res.status(400).json({
+                    status: "Error",
+                    message: "username or password or email already in uses",
+                }); 
             })
-        }
-        else{
-            res.status(400).json({
-                status: "Error",
-                message: "username or password or email already in uses",
-        });
+
         }
     }
     else{
