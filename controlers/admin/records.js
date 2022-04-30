@@ -10,15 +10,13 @@ exports.insert= async(req,res)=>{
     let username=req.body.username
     let email=req.body.email
     let book_name=req.body.book_name
-    let total_book=await db.query('SELECT count(*) FROM records');
-    console.log(total_book.rows)
+    let total_book_reference=await db.query('SELECT count(*) FROM records');
+    let total_book=total_book_reference.rows[0].count
     let date=new Date().toISOString().slice(0, 10)
 
-    sql='insert into records(username,email,book_name,date,total_book) values ($1,$2,$3,$4,$5) returning*;'
+    sql=`insert into records(username,email,book_name,date,total_book) values ($1,$2,$3,$4,${total_book}) returning*;`
 
-    db.query(sql,[username,email,book_name,date,total_book.rows],(err,result)=>{
-
-        console.log(sql)
+    db.query(sql,[username,email,book_name,date],(err,result)=>{
 
         if(!err){
             res.status(200).json({
@@ -54,8 +52,7 @@ exports.delete=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -79,8 +76,7 @@ exports.fetch=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -104,8 +100,7 @@ exports.fetch_id=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -148,8 +143,7 @@ exports.update=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -204,8 +198,7 @@ exports.search=(req,res,next)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -231,8 +224,7 @@ exports.sort=(req,res,next)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }

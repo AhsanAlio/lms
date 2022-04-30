@@ -27,13 +27,10 @@ exports.signup=(req,res,next)=>{
 
     if(validateEmail(email)==true && validateusername(username==true)){
 
-        console.log('hello')
-
         const unique=db.query('select username,password,email from users where username=$1 or password=$2 or email=$3',[username,password,email])
 
         if(unique==null){
 
-            console.log('elif')
             res.status(400).json({
             status: "Error",
             message: "username or password or email already in uses",
@@ -59,7 +56,7 @@ exports.signup=(req,res,next)=>{
                     res.status(200).json({
                         status: "success",
                         message: "data inserted!",
-                        data: result.rows
+                        data:result.rows
                     });
                 }
                 else

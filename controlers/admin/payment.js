@@ -29,8 +29,7 @@ exports.insert=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
 
     })
@@ -54,8 +53,7 @@ exports.delete=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -79,8 +77,7 @@ exports.fetch=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -104,8 +101,7 @@ exports.fetch_id=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -148,8 +144,7 @@ exports.update=(req,res,next)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -182,8 +177,6 @@ exports.search=(req,res,next)=>{
 
     sql = sql.slice(0, -4); 
 
-    console.log(sql)
-
     db.query(sql,(err,result)=>{
 
         if(result.rows.length<=0)
@@ -206,8 +199,7 @@ exports.search=(req,res,next)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -233,8 +225,7 @@ exports.sort=(req,res,next)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }

@@ -6,7 +6,7 @@ const db=require('../database_reference')
 
 // To Create data in books
 
-exports.insert=(req,res)=>{
+exports.insert=async(req,res)=>{
 
     let uuid = require('uuid');
     let uuid2=uuid.v4();
@@ -18,36 +18,37 @@ exports.insert=(req,res)=>{
     let description=req.body.description
     let subject=req.body.subject
     let isbn_no=uuid3
+    let copy=0
     let date=new Date().toISOString().slice(0, 10)
-    let copy=req.body.copy
+    
+    let sql='insert into books(title,price,author,description,date,subject,isbn_no,copy) values ($1,$2,$3,$4,$5,$6,$7,$8) returning*;'
 
-    const copies=db.query('select copy from books where copy=$1',[copy])
 
-    if(copies==null){
+    db.query(sql,[title,price,author,description,date,subject,isbn_no,copy],(err,result)=>{
 
-        sql='insert into books(title,price,author,description,date,subject,isbn_no,copy) values ($1,$2,$3,$4,$5,$6,$7,$8)'
+        if(!err){
+            res.status(200).json({
+                status:'success',
+                message:'data inserted!',
+                date:result.rows
+            })
+        }
+        else{
+            res.status(500).json({
+            status: "Error",
+            message: "Query Execution Error!"
+        });
+        }
 
-        db.query(sql,[title,price,author,description,date,subject,isbn_no],copy,(err,result)=>{
-
-            if(!err){
-                res.status(200).json({
-                    status:'success',
-                    message:'data inserted!',
-                    date:result.rows
-                })
-            }
-            else
-                res.status(500).json({
-                status: "Error",
-                message: "Query Execution Error!",
-                data: result.rows
-            });
-
-        })
-    }
-    else{
-        copy=copy+1
-    }
+    })
+    let copy_refrence=await db.query(' select copy  from books where title=$1 and  author=$2',[title,author])
+    
+    if(copy_refrence.rows.length>=1){
+        
+        var copy2=copy_refrence.rows[0].copy
+        var copy2=copy2+1
+        db.query(`update books set copy=${copy2} where title=$1 and  author=$2`,[title,author])
+    }     
 }
 
 //To Delete Data from books
@@ -68,8 +69,7 @@ exports.delete=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -93,8 +93,7 @@ exports.fetch=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -118,8 +117,7 @@ exports.fetch_id=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -174,8 +172,7 @@ exports.update=(req,res,next)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -238,19 +235,19 @@ exports.search=(req,res,next)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
 
 // to sort data from books
-exports.sort=(req,res,next)=>{
+exports.sort=(req,res)=>{
 
-    let username=req.body.username
+    let title=req.body.title
     let copy =req.body.copy
 
-    let sql=`select id,title,price,author,description,date,subject,isbn_no from books order by subject ${username} , date ${copy}`
+    let sql=`select id,title,price,author,description,date,subject,isbn_no,copy from books order by title ${title} , copy ${copy}`
+
     db.query(sql,(err,result)=>{
 
         if(!err) {
@@ -265,8 +262,7 @@ exports.sort=(req,res,next)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }

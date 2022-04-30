@@ -26,8 +26,7 @@ exports.delete=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -51,8 +50,7 @@ exports.fetch=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -76,8 +74,7 @@ exports.fetch_id=(req,res)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -132,8 +129,7 @@ exports.update=(req,res,next)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -200,8 +196,7 @@ exports.search=(req,res,next)=>{
         else
             res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
@@ -227,8 +222,7 @@ exports.sort=(req,res,next)=>{
         else
         res.status(500).json({
             status: "Error",
-            message: "Query Execution Error!",
-            data: result.rows
+            message: "Query Execution Error!"
         });
     })
 }
