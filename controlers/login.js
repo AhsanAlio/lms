@@ -3,7 +3,7 @@ const db=require('../database')
 
 const generateAccessToken = (user) => {
     return jwt.sign({ username: user.username, email:user.email,occupation:user.occupation}, "mySecretKey", {
-      expiresIn: "30s",
+      expiresIn: "300000000s",
     });
   };
 

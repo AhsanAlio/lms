@@ -7,55 +7,75 @@ const db=require('../database_reference')
 
 exports.insert=(req,res)=>{
 
-    let username=req.body.username
-    let email=req.body.email
-    let book_name=req.body.book_name
-    let pay_type=req.body.pay_type
-    let date=new Date().toISOString().slice(0, 10)
+    const token = `${req.headers.authorization}`;
+    const tokenDecodablePart = token.split('.')[1];
+    const decoded = Buffer.from(tokenDecodablePart, 'base64').toString();
+    let obj = JSON.parse(decoded);
+    if(obj.occupation=='librarian'){
 
-    sql='insert into payment(username,email,book_name,pay_type,date) values ($1,$2,$3,$4,$5) returning*;'
+        let username=req.body.username
+        let email=req.body.email
+        let book_name=req.body.book_name
+        let pay_type=req.body.pay_type
+        let date=new Date().toISOString().slice(0, 10)
 
-    db.query(sql,[username,email,book_name,pay_type,date],(err,result)=>{
+        sql='insert into payment(username,email,book_name,pay_type,date) values ($1,$2,$3,$4,$5) returning*;'
+
+        db.query(sql,[username,email,book_name,pay_type,date],(err,result)=>{
 
 
-        if(!err){
+            if(!err){
 
-            res.status(200).json({
-                status:'success',
-                message:'data inserted!',
-                date:result.rows
-            })
-        }
-        else
-            res.status(500).json({
-            status: "Error",
-            message: "Query Execution Error!"
-        });
+                res.status(200).json({
+                    status:'success',
+                    message:'data inserted!',
+                    date:result.rows
+                })
+            }
+            else
+                res.status(500).json({
+                status: "Error",
+                message: "Query Execution Error!"
+            });
 
-    })
+        })
+    }
+    else{
+        res.json({message:'please login as librarien'})
+    }
 }
 
 //To Delete Data from payment
 exports.delete=(req,res)=>{
 
-    sql='delete from payment where id=$1 returning *;'
+    const token = `${req.headers.authorization}`;
+    const tokenDecodablePart = token.split('.')[1];
+    const decoded = Buffer.from(tokenDecodablePart, 'base64').toString();
+    let obj = JSON.parse(decoded);
+    if(obj.occupation=='librarian'){
 
-    db.query(sql,[req.params.id],(err,result)=>{
+        sql='delete from payment where id=$1 returning *;'
 
-        if(!err) {
+        db.query(sql,[req.params.id],(err,result)=>{
 
-            res.status(200).json({
-                status: "success",
-                message: "data deleted!",
-                data: result.rows
+            if(!err) {
+
+                res.status(200).json({
+                    status: "success",
+                    message: "data deleted!",
+                    data: result.rows
+                });
+            }
+            else
+                res.status(500).json({
+                status: "Error",
+                message: "Query Execution Error!"
             });
-        }
-        else
-            res.status(500).json({
-            status: "Error",
-            message: "Query Execution Error!"
-        });
-    })
+        })
+    }
+    else{
+        res.json({message:'please login as librarien'})
+    }
 }
 
 // To Fecth Data from payment
@@ -110,43 +130,54 @@ exports.fetch_id=(req,res)=>{
 
 exports.update=(req,res,next)=>{
 
-    let sql=`update payment set `
+    const token = `${req.headers.authorization}`;
+    const tokenDecodablePart = token.split('.')[1];
+    const decoded = Buffer.from(tokenDecodablePart, 'base64').toString();
+    let obj = JSON.parse(decoded);
+    if(obj.occupation=='librarian'){
 
-    if(req.body.username) {
-        sql = sql + `username = '${req.body.username}',`;
-    }
 
-    if(req.body.email) {
-        sql = sql + `email = '${req.body.email}',`;
-    }
+        let sql=`update payment set `
 
-    if(req.body.book_name) {
-        sql = sql + `book_name = '${req.body.book_name}',`;
-    }
-
-    if(req.body.pay_type) {
-        sql = sql + `pay_type = '${req.body.pay_type}',`;
-    }
-
-    sql = sql.slice(0, -1); 
-    sql = sql+ ` WHERE id = $1 returning*;`;
-
-    db.query(sql,[req.params.id],(err,result)=>{
-
-        if(!err) {
-
-            res.status(200).json({
-                status: "success",
-                message: "data updated!",
-                data: result.rows
-            });
+        if(req.body.username) {
+            sql = sql + `username = '${req.body.username}',`;
         }
-        else
-            res.status(500).json({
-            status: "Error",
-            message: "Query Execution Error!"
-        });
-    })
+
+        if(req.body.email) {
+            sql = sql + `email = '${req.body.email}',`;
+        }
+
+        if(req.body.book_name) {
+            sql = sql + `book_name = '${req.body.book_name}',`;
+        }
+
+        if(req.body.pay_type) {
+            sql = sql + `pay_type = '${req.body.pay_type}',`;
+        }
+
+        sql = sql.slice(0, -1); 
+        sql = sql+ ` WHERE id = $1 returning*;`;
+
+        db.query(sql,[req.params.id],(err,result)=>{
+
+            if(!err) {
+
+                res.status(200).json({
+                    status: "success",
+                    message: "data updated!",
+                    data: result.rows
+                });
+            }
+            else
+                res.status(500).json({
+                status: "Error",
+                message: "Query Execution Error!"
+            });
+        })
+    }
+    else{
+        res.json({message:'please login as librarien'})
+    }
 }
 
 // To search  and filter data from payment
