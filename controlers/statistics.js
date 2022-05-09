@@ -1,6 +1,7 @@
 const db=require('../database')
 
 exports.stats= async (req,res)=>{
+    console.log('API has been Called for statistics')
     let Highest_lent_book=1;
     let Most_Active_User=2;
     let Oldest_Book= await db.query('select * from books order by date asc limit 1')

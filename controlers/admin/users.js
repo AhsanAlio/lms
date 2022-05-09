@@ -8,6 +8,8 @@ const insert_users=require('../signup')
 
 exports.insert=(req,res)=>{
 
+    console.log('API has been Called for users insert')
+
     const token = `${req.headers.authorization}`;
     const tokenDecodablePart = token.split('.')[1];
     const decoded = Buffer.from(tokenDecodablePart, 'base64').toString();
@@ -93,6 +95,8 @@ exports.insert=(req,res)=>{
 //To Delete Data from users
 exports.delete=(req,res)=>{
 
+    console.log('API has been Called for users delete')
+
     const token = `${req.headers.authorization}`;
     const tokenDecodablePart = token.split('.')[1];
     const decoded = Buffer.from(tokenDecodablePart, 'base64').toString();
@@ -127,6 +131,8 @@ exports.delete=(req,res)=>{
 
 exports.fetch=(req,res)=>{
 
+    console.log('API has been Called for users read')
+
     sql='select * from users'
 
     db.query(sql,(err,result)=>{
@@ -151,6 +157,8 @@ exports.fetch=(req,res)=>{
 
 exports.fetch_id=(req,res)=>{
 
+    console.log('API has been Called for users read by id')
+
     sql='select * from users where id=$1;'
 
     db.query(sql,[req.params.id],(err,result)=>{
@@ -174,6 +182,8 @@ exports.fetch_id=(req,res)=>{
 // To update data from users by id
 
 exports.update=(req,res,next)=>{
+
+    console.log('API has been Called for users update')
 
     const token = `${req.headers.authorization}`;
     const tokenDecodablePart = token.split('.')[1];
@@ -214,7 +224,11 @@ exports.update=(req,res,next)=>{
         sql = sql.slice(0, -1); 
         sql = sql+ ` WHERE id = $1 returning*;`;
 
+        console.log(sql)
+
         db.query(sql,[req.params.id],(err,result)=>{
+
+            console.log(result)
 
             if(!err) {
 
@@ -239,6 +253,8 @@ exports.update=(req,res,next)=>{
 // To search  and filter data from users
 
 exports.search=(req,res,next)=>{
+
+    console.log('API has been Called for users search')
 
     let sql=`select * from users where `
 
@@ -305,6 +321,8 @@ exports.search=(req,res,next)=>{
 
 // to sort data from users
 exports.sort=(req,res,next)=>{
+
+    console.log('API has been Called for users sort')
 
     let username=req.body.username
     let date=req.body.date

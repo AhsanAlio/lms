@@ -6,6 +6,8 @@ const db=require('../database_reference')
 
 exports.insert=async(req,res)=>{
 
+    console.log('API has been Called for books insert')
+
     const token = `${req.headers.authorization}`;
     const tokenDecodablePart = token.split('.')[1];
     const decoded = Buffer.from(tokenDecodablePart, 'base64').toString();
@@ -62,6 +64,8 @@ exports.insert=async(req,res)=>{
 //To Delete Data from books
 exports.delete=(req,res)=>{
 
+    console.log('API has been Called for books delete')
+
     const token = `${req.headers.authorization}`;
     const tokenDecodablePart = token.split('.')[1];
     const decoded = Buffer.from(tokenDecodablePart, 'base64').toString();
@@ -96,6 +100,8 @@ exports.delete=(req,res)=>{
 
 exports.fetch=(req,res)=>{
 
+    console.log('API has been Called for books read')
+
     sql='select * from books'
 
     db.query(sql,(err,result)=>{
@@ -118,6 +124,8 @@ exports.fetch=(req,res)=>{
 // To Fecth Data from books by id
 
 exports.fetch_id=(req,res)=>{
+
+    console.log('API has been Called for books read by id')
 
     sql='select * from books where id=$1'
 
@@ -142,6 +150,8 @@ exports.fetch_id=(req,res)=>{
 // To update data from books by id
 
 exports.update=(req,res,next)=>{
+
+    console.log('API has been Called for books update')
 
     const token = `${req.headers.authorization}`;
     const tokenDecodablePart = token.split('.')[1];
@@ -208,6 +218,8 @@ exports.update=(req,res,next)=>{
 
 exports.search=(req,res,next)=>{
 
+    console.log('API has been Called for books search')
+
     let sql=`select * from books where `
 
     if(req.body.title) {
@@ -240,35 +252,48 @@ exports.search=(req,res,next)=>{
 
     sql = sql.slice(0, -4); 
 
-    db.query(sql,(err,result)=>{
+    // console.log(sql.length)
 
-        if(result.rows.length<=0)
-        {
-            res.status(404).json({
-                status: "Failed",
-                message: "data Not Found!"
+    if(sql.length>=23)
+    {
+        db.query(sql,(err,result)=>{
+
+            if(result.rows.length<=0)
+            {
+                res.status(404).json({
+                    status: "Failed",
+                    message: "data Not Found!"
+                });
+            }
+
+            else if(!err) {
+
+                res.status(200).json({
+                    status: "success",
+                    message: "data Found!",
+                    data: result.rows
+
+                });
+            }
+            else
+                res.status(500).json({
+                status: "Error",
+                message: "Query Execution Error!"
             });
-        }
-
-        else if(!err) {
-
-            res.status(200).json({
-                status: "success",
-                message: "data Found!",
-                data: result.rows
-
+        })
+    }
+    else{
+        res.status(500).json({
+        status: "Error",
+        message: "Query Execution Error!"
             });
-        }
-        else
-            res.status(500).json({
-            status: "Error",
-            message: "Query Execution Error!"
-        });
-    })
+    }
 }
 
 // to sort data from books
 exports.sort=(req,res)=>{
+
+    console.log('API has been Called for books sort')
 
     let title=req.body.title
     let copy =req.body.copy

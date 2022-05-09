@@ -15,24 +15,28 @@ const generateAccessToken = (user) => {
 
   exports.tokens=async (req,res)=>{
 
+    console.log('API has been Called for login')
+
     let username=req.body.username
     let password=req.body.password
 
     const user= await db.query('select * from user_rule where username=$1 and password=$2',[username,password]);
 
-    if (user) {
+    if (user.rows[0]==null) {
         //Generate an access token
+        res.status(400).json("Username or password incorrect!");
+    } else {
+
         const accessToken = generateAccessToken(user.rows[0]);
         const refreshToken = generateRefreshToken(user.rows[0]);
         res.json({
-          username: user.rows[0].username,
-          email:user.rows[0].email,
-          occupation:user.rows[0].occupation,
-          accessToken:accessToken,
-          refreshToken:refreshToken
-        });
-    } else {
-        res.status(400).json("Username or password incorrect!");
+        username: user.rows[0].username,
+        email:user.rows[0].email,
+        occupation:user.rows[0].occupation,
+        accessToken:accessToken,
+        refreshToken:refreshToken
+      });
+        
       }
 }
 

@@ -7,6 +7,8 @@ const db=require('../database_reference')
 
 exports.insert=(req,res)=>{
 
+    console.log('API has been Called for payment insert')
+
     const token = `${req.headers.authorization}`;
     const tokenDecodablePart = token.split('.')[1];
     const decoded = Buffer.from(tokenDecodablePart, 'base64').toString();
@@ -48,10 +50,13 @@ exports.insert=(req,res)=>{
 //To Delete Data from payment
 exports.delete=(req,res)=>{
 
+    console.log('API has been Called for payment delete')
+
     const token = `${req.headers.authorization}`;
     const tokenDecodablePart = token.split('.')[1];
     const decoded = Buffer.from(tokenDecodablePart, 'base64').toString();
     let obj = JSON.parse(decoded);
+    // console.log(tokenDecodablePart,obj)
     if(obj.occupation=='librarian'){
 
         sql='delete from payment where id=$1 returning *;'
@@ -82,6 +87,8 @@ exports.delete=(req,res)=>{
 
 exports.fetch=(req,res)=>{
 
+    console.log('API has been Called for payment read')
+
     sql='select * from payment'
 
     db.query(sql,(err,result)=>{
@@ -106,6 +113,8 @@ exports.fetch=(req,res)=>{
 
 exports.fetch_id=(req,res)=>{
 
+    console.log('API has been Called for payment read by id')
+
     sql='select * from payment where id=$1;'
 
     db.query(sql,[req.params.id],(err,result)=>{
@@ -129,6 +138,8 @@ exports.fetch_id=(req,res)=>{
 // To update data from payment by id
 
 exports.update=(req,res,next)=>{
+
+    console.log('API has been Called for payment update')
 
     const token = `${req.headers.authorization}`;
     const tokenDecodablePart = token.split('.')[1];
@@ -184,6 +195,8 @@ exports.update=(req,res,next)=>{
 
 exports.search=(req,res,next)=>{
 
+    console.log('API has been Called for payment search')
+
     let sql=`select * from payment where `
 
     if(req.body.username) {
@@ -207,6 +220,8 @@ exports.search=(req,res,next)=>{
     }
 
     sql = sql.slice(0, -4); 
+
+    console.log(sql)
 
     db.query(sql,(err,result)=>{
 
@@ -237,6 +252,8 @@ exports.search=(req,res,next)=>{
 
 // to sort data from payment
 exports.sort=(req,res,next)=>{
+
+    console.log('API has been Called for payment sort')
 
     let username=req.body.username
     let date =req.body.date

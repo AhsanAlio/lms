@@ -4,6 +4,8 @@ const db=require('../database')
 // To Create Data
 exports.signup=(req,res,next)=>{
 
+    console.log('API has been Called for signup')
+
     function validateEmail(email) 
         {
             var re = /\S+@\S+\.\S+/;

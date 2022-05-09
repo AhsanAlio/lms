@@ -6,6 +6,6 @@ const login=require('../controlers/login')
 
 const stat=require('../controlers/statistics')
 
-router.get('/statistics',stat.stats)
+router.get('/statistics',login.verify,stat.stats)
 
 module.exports=router
